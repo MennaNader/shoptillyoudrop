@@ -16,7 +16,7 @@ let cart = new Cart(observer)
 class App extends Component {
   state = {
     items: [],
-    cart: cart.getState().items,
+    cart: cart.getState(),
     showCart: false
   }
 
@@ -27,7 +27,7 @@ class App extends Component {
         this.setState({ items: response.data.data })
       })
     observer.subscribe(consts.cartChanged, () => {
-      this.setState({ cart: cart.getState().items })
+      this.setState({ cart: cart.getState() })
     })
   }
 
@@ -43,6 +43,10 @@ class App extends Component {
     cart.removeAll()
     this.showCart()
   }
+  updateItem = (action, item) => {
+    observer.publish(action, item)
+  }
+
   render () {
     let { cart, items, showCart } = this.state
     return (
@@ -62,10 +66,42 @@ class App extends Component {
               <Card item={item} key={item.id} action={this.addToCart} />
             ))}
           </div>
-          {showCart && cart
+          {showCart
             ? <div className='cart'>
-              <button onClick={this.clear}>Clear</button>
-              {cart.map(item => <h2>{item.title}</h2>)}
+              {cart.items.length > 0 &&
+              <button onClick={this.clear}>Clear</button>}
+              {cart.items &&
+                  cart.items.map(item => (
+                    <div className='cart-item' key={`${item.id}cart`}>
+                      <h2>{item.title}</h2>
+                      <p>{item.num} items</p>
+                      <p>{item.num * item.price} EGP</p>
+
+                      <button
+                        onClick={() => {
+                          this.updateItem(consts.addItem, item)
+                        }}
+                      >
+                        +
+                      </button><button
+                        onClick={() => {
+                          this.updateItem(consts.reduceItem, item)
+                        }}
+                      >
+                        -
+                      </button>
+                    </div>
+                  ))}
+              {cart.items.length === 0 && <p>Add things to cart </p>}
+              {cart.items.length > 0 &&
+              <button
+                onClick={() => {
+                  alert('Paid')
+                  this.clear()
+                }}
+                  >
+                    Pay {cart.total} EGP
+                  </button>}
             </div>
             : null}
         </section>

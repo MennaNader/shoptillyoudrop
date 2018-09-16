@@ -15,9 +15,9 @@ export default class Observer {
     }
   }
 
-  publish = function (action) {
+  publish = function (action, props = {}) {
     if (this.events[action]) {
-      this.events[action].forEach(fn => fn())
+      this.events[action].forEach(fn => fn(props))
     } else {
       return new Error('This Event is not recognized')
     }

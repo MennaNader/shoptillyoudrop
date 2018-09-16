@@ -1,5 +1,7 @@
 const consts = {
-  cartChanged: 'cart.changed'
+  cartChanged: 'cart.changed',
+  reduceItem: 'reduce.item',
+  addItem: 'add.item'
 }
 
 Object.freeze(consts)
